@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Products - Simple Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="manohari-tf-style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <p class="brand-title">Simple Shop</p>
+        <p class="brand-subtitle">Product catalog</p>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a class="button-link" href="manohari-tf-index.html">Home</a>
+      <a class="button-link" href="manohari-tf-cart.html">Cart</a>
+      <a class="button-link" href="manohari-tf-payment.html">Payment</a>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>Browse products</h1>
+      <p>View the available items in the store and add what you like to your cart.</p>
+      <div style="margin-top: 16px;">
+        <label for="apiVersion">API Version: </label>
+        <select id="apiVersion" onchange="changeVersion()">
+          <option value="v1">v1</option>
+          <option value="v2">v2</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Available items</h2>
+      <p>Click refresh to load the latest product list and add items to your cart.</p>
+      <button class="checkout-btn" onclick="getProducts()">Refresh products</button>
+      <div id="productList" style="margin-top: 24px;"></div>
+    </section>
+  </main>
+  <div class="footer">© 2026 Simple Shop</div>
+
+  <script>
+    const USER_ID = 'user1'; // Hardcoded user ID for demo
+    const urls = {
+      products: "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/products",
+      cart: "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/cart"
+    };
+    let currentVersion = 'v1';
+
+    function changeVersion() {
+      currentVersion = document.getElementById('apiVersion').value;
+      getProducts(); // Reload products with new version
+    }
+
+    function getProducts() {
+      fetch(urls.products, {
+        headers: {
+          'Api-Version': currentVersion
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          const products = data.body ? JSON.parse(data.body) : data;
+          const html = products.map(p => {
+            const outOfStock = Number(p.availability) <= 0;
+            return `
+              <div class="product-card">
+                <h4>${p.product_name}</h4>
+                <div class="product-meta">₹${p.price} · ⭐ ${p.rating}</div>
+                <div class="product-meta">${outOfStock ? 'Out of stock' : 'In stock'}</div>
+                <button onclick="addToCart('${p.id}')" ${outOfStock ? 'disabled' : ''}>Add to cart</button>
+              </div>`;
+          }).join('');
+          document.getElementById('productList').innerHTML = html || '<p>No products available.</p>';
+        })
+        .catch(() => {
+          document.getElementById('productList').innerHTML = '<p>Unable to load products.</p>';
+        });
+    }
+
+    function addToCart(id) {
+      fetch(urls.cart, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Api-Version': currentVersion
+        },
+        body: JSON.stringify({ userId: USER_ID, itemId: id, quantity: 1 })
+      })
+        .then(() => alert('Item added to cart'))
+        .catch(() => alert('Could not add item.'));
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('apiVersion').value = currentVersion;
+      getProducts();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+### V1 APIs ###
+
+### Products API V1
+GET https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v1/products
+
+###
+
+### Cart API V1 - Add to cart
+POST https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v1/cart
+Content-Type: application/json
+
+{
+  "userId": "user1",
+  "itemId": "p1",
+  "quantity": 1
+}
+
+###
+
+### Cart API V1 - Get cart
+GET https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v1/cart?userId=user1
+
+###
+
+### Cart API V1 - Delete from cart
+DELETE https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v1/cart
+Content-Type: application/json
+
+{
+  "userId": "user1",
+  "itemId": "p1"
+}
+
+###
+
+### Payment API V1
+POST https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v1/pay
+Content-Type: application/json
+
+{
+  "amount": 500,
+  "user": "Manohari"
+}
+
+###
+
+### V2 APIs ###
+
+### Products API V2
+GET https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v2/products
+
+###
+
+### Cart API V2 - Add to cart
+POST https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v2/cart
+Content-Type: application/json
+
+{
+  "userId": "user1",
+  "itemId": "p1",
+  "quantity": 1
+}
+
+###
+
+### Cart API V2 - Get cart
+GET https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v2/cart?userId=user1
+
+###
+
+### Cart API V2 - Delete from cart
+DELETE https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v2/cart
+Content-Type: application/json
+
+{
+  "userId": "user1",
+  "itemId": "p1"
+}
+
+###
+
+### Payment API V2
+POST https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/v2/pay
+Content-Type: application/json
+
+{
+  "amount": 500,
+  "user": "Manohari"
+}
+
+###
