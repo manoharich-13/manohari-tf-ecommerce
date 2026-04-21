@@ -4,48 +4,22 @@ A serverless e-commerce application built with AWS Lambda, API Gateway, and Dyna
 
 ## Architecture
 
-- **Frontend**: HTML/CSS/JavaScript with API versioning support via headers
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Browser   │───▶│ API Gateway │───▶│   Lambda    │───▶│  DynamoDB   │
+│             │    │             │    │ Functions   │    │             │
+│ • HTML/JS   │    │ • REST API  │    │ • Products  │    │ • Products  │
+│ • Cart UI   │    │ • CORS      │    │ • Cart      │    │ • Cart      │
+│ • Payments  │    │ • Headers   │    │ • Payments  │    │ • Payments  │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+## Architecture Components
+
+- **Frontend**: HTML/CSS/JavaScript with API versioning via headers
 - **Backend**: AWS Lambda functions for products, cart, and payment services
 - **Database**: DynamoDB tables for products, cart, and payments
 - **API**: API Gateway with REST endpoints using header-based versioning
-
-                   ┌──────────────────────────────┐
-                   │           USER               │
-                   │        (Browser UI)          │
-                   └─────────────┬────────────────┘
-                                 │
-                                 ▼
-        ┌────────────────────────────────────────────┐
-        │                FRONTEND                    │
-        │  HTML / CSS / JavaScript                  │
-        │  - Version selector (v1 / v2)             │
-        │  - Sends Api-Version header              │
-        └─────────────┬────────────────────────────┘
-                      │
-                      ▼
-        ┌────────────────────────────────────────────┐
-        │              API GATEWAY                   │
-        │  - REST Endpoints                         │
-        │  - Reads "Api-Version" header            │
-        │  - Routes to appropriate Lambda logic    │
-        └───────┬──────────────┬──────────────┬─────┘
-                │              │              │
-                ▼              ▼              ▼
-
-   ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
-   │ PRODUCT SERVICE│  │  CART SERVICE  │  │ PAYMENT SERVICE│
-   │   (Lambda)     │  │   (Lambda)     │  │   (Lambda)     │
-   │                │  │                │  │                │
-   │ GET /products  │  │ POST /cart     │  │ POST /pay      │
-   │ (v1 / v2 logic)│  │ GET /cart      │  │ GET /pay       │
-   └──────┬─────────┘  └──────┬─────────┘  └──────┬─────────┘
-          │                   │                   │
-          ▼                   ▼                   ▼
-
- ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
- │ DynamoDB       │  │ DynamoDB       │  │ DynamoDB       │
- │ Products Table │  │ Cart Table     │  │ Payments Table │
- └────────────────┘  └────────────────┘  └────────────────┘
 
 
                 ┌──────────────────────────────────────┐
