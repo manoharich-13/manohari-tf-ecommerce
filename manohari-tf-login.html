@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Simple Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="manohari-tf-style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <p class="brand-title">Simple Shop</p>
+        <p class="brand-subtitle" id="headerSubtitle">Welcome back</p>
+      </div>
+    </div>
+    <div id="userSection" style="display: none;">
+      <span id="userGreeting"></span>
+      <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>Login to your account</h1>
+      <p>Access your cart and continue shopping securely.</p>
+    </section>
+
+    <!-- Login Form -->
+    <div class="login-container">
+      <section class="card" id="loginSection">
+        <h2>🔐 Login to your account</h2>
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="loginEmail">📧 Email:</label>
+            <input type="email" id="loginEmail" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">🔒 Password:</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+          </div>
+          <button type="submit" class="login-btn">🚀 Login</button>
+        </form>
+        <div class="auth-toggle">
+          <p>Don't have an account? <a href="#" onclick="showRegister()">Create one here</a></p>
+        </div>
+        <div id="loginMessage"></div>
+      </section>
+    </div>
+
+    <!-- Register Form -->
+    <div class="login-container">
+      <section class="card" id="registerSection" style="display: none;">
+        <h2>✨ Create Account</h2>
+        <form id="registerForm" class="login-form">
+          <div class="form-group">
+            <label for="registerName">👤 Name:</label>
+            <input type="text" id="registerName" placeholder="Enter your full name" required>
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">📧 Email:</label>
+            <input type="email" id="registerEmail" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">🔒 Password:</label>
+            <input type="password" id="registerPassword" placeholder="Create a password (min 6 chars)" required minlength="6">
+          </div>
+          <button type="submit" class="register-btn">🎉 Create Account</button>
+        </form>
+        <div class="auth-toggle">
+          <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+        </div>
+        <div id="registerMessage"></div>
+      </section>
+    </div>
+  </main>
+  <div class="footer">© 2026 Simple Shop</div>
+
+  <script>
+    // API URLs
+    const api_base_url = "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev"
+    const auth_register_url = "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/auth/register"
+    const auth_login_url = "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/auth/login"
+    // Logout function
+    function logout() {
+      clearCurrentUser();
+      document.getElementById('userSection').style.display = 'none';
+      document.getElementById('headerSubtitle').textContent = 'Welcome back';
+      document.getElementById('loginSection').style.display = 'block';
+      alert('Logged out successfully');
+    }
+
+    // Check if user is already logged in
+    function checkAuth() {
+      const user = getCurrentUser();
+      if (user) {
+        document.getElementById('userSection').style.display = 'flex';
+        document.getElementById('userGreeting').textContent = `Welcome, ${user.name || user.email}! `;
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('registerSection').style.display = 'none';
+        // Don't redirect on login page
+      }
+    }
+
+    // Get current user from localStorage
+    function getCurrentUser() {
+      try {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Set current user in localStorage
+    function setCurrentUser(user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    }
+
+    // Clear current user
+    function clearCurrentUser() {
+      localStorage.removeItem('currentUser');
+    }
+
+    // Show login form
+    function showLogin() {
+      document.getElementById('loginSection').style.display = 'block';
+      document.getElementById('registerSection').style.display = 'none';
+      document.getElementById('loginMessage').innerHTML = '';
+      document.getElementById('registerMessage').innerHTML = '';
+    }
+
+    // Show register form
+    function showRegister() {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('registerSection').style.display = 'block';
+      document.getElementById('loginMessage').innerHTML = '';
+      document.getElementById('registerMessage').innerHTML = '';
+    }
+
+    // Login form handler
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const response = await fetch(auth_login_url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Login successful
+          setCurrentUser(data.user);
+          document.getElementById('loginMessage').innerHTML =
+            '<div style="color: green;">Login successful! Redirecting...</div>';
+
+          // Redirect to products page after a short delay
+          setTimeout(() => {
+            window.location.href = 'manohari-tf-products.html';
+          }, 1000);
+        } else {
+          // Login failed
+          document.getElementById('loginMessage').innerHTML =
+            `<div style="color: red;">${data.message || 'Login failed'}</div>`;
+        }
+      } catch (error) {
+        document.getElementById('loginMessage').innerHTML =
+          '<div style="color: red;">Network error. Please try again.</div>';
+      }
+    });
+
+    // Register form handler
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('registerName').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+
+      try {
+        const response = await fetch(auth_register_url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Registration successful
+          setCurrentUser(data);
+          document.getElementById('registerMessage').innerHTML =
+            '<div style="color: green;">Account created successfully! Redirecting...</div>';
+
+          // Redirect to products page after a short delay
+          setTimeout(() => {
+            window.location.href = 'manohari-tf-products.html';
+          }, 1000);
+        } else {
+          // Registration failed
+          document.getElementById('registerMessage').innerHTML =
+            `<div style="color: red;">${data.message || 'Registration failed'}</div>`;
+        }
+      } catch (error) {
+        document.getElementById('registerMessage').innerHTML =
+          '<div style="color: red;">Network error. Please try again.</div>';
+      }
+    });
+
+    // Initialize page
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuth(); // Check if already logged in
+    });
+  </script>
+</body>
+</html>

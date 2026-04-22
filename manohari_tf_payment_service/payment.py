@@ -17,7 +17,7 @@ def response(status, body):
         "statusCode": status,
         "headers": {
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Content-Type,Api-Version",
+            "Access-Control-Allow-Headers": "Content-Type",
             "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
         },
         "body": json.dumps(body, cls=DecimalEncoder)
@@ -40,7 +40,7 @@ def lambda_handler(event, context):
             "statusCode": 200,
             "headers": {
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type,Api-Version",
+                "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
             },
             "body": json.dumps({"message": "CORS OK"})
@@ -67,8 +67,8 @@ def lambda_handler(event, context):
             "statusCode": 200,
             "headers": {
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
                 "Content-Type": "application/json"
             },
             "body": json.dumps({

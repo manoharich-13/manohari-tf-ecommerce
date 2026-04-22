@@ -26,7 +26,7 @@ def lambda_handler(event, context):
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',   # 🔥 FIX
                 'Access-Control-Allow-Methods': 'GET,OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type,Api-Version'
+                'Access-Control-Allow-Headers': 'Content-Type'
             },
             'body': json.dumps(items, cls=DecimalEncoder)
         }
@@ -37,7 +37,7 @@ def lambda_handler(event, context):
             'headers': {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',   # 🔥 FIX
-                'Access-Control-Allow-Headers': 'Content-Type,Api-Version'
+                'Access-Control-Allow-Headers': 'Content-Type'
             },
             'body': json.dumps({"error": str(e)})
         }

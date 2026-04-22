@@ -23,6 +23,22 @@ resource "aws_dynamodb_table" "payments" {
   }
 }
 
+# Users Table for Authentication
+resource "aws_dynamodb_table" "users" {
+  name         = "users-table"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "email"
+
+  attribute {
+    name = "email"
+    type = "S"
+  }
+
+  tags = {
+    Name = "Users"
+  }
+}
+
 # Sample Products
 resource "aws_dynamodb_table_item" "product1" {
   table_name = data.aws_dynamodb_table.products.name

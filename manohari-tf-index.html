@@ -16,6 +16,9 @@
       </div>
     </div>
     <div class="nav-actions">
+      <span id="userInfo" style="margin-right: 16px;"></span>
+      <a class="button-link" id="loginBtn" href="manohari-tf-login.html" style="display: none;">Login</a>
+      <button id="logoutBtn" onclick="logout()" class="logout-btn" style="display: none;">Logout</button>
       <a class="button-link" href="manohari-tf-products.html">Products</a>
       <a class="button-link" href="manohari-tf-cart.html">Cart</a>
       <a class="button-link" href="manohari-tf-payment.html">Payment</a>
@@ -32,23 +35,78 @@
       <div class="card">
         <h2>Products</h2>
         <p>Explore the store catalog and add items to your cart.</p>
-        <a class="button-link" href="products.html">Go to products</a>
+        <a class="button-link" href="manohari-tf-products.html">Go to products</a>
       </div>
 
       <div class="card">
         <h2>Cart</h2>
-        <p>See what’s in your cart and manage your order before checkout.</p>
-        <a class="button-link" href="cart.html">View cart</a>
+        <p>See what's in your cart and manage your order before checkout.</p>
+        <a class="button-link" href="manohari-tf-cart.html">View cart</a>
       </div>
 
       <div class="card">
         <h2>Payment</h2>
         <p>Finalize your order and complete payment on a dedicated page.</p>
-        <a class="button-link" href="payment.html">Go to payment</a>
+        <a class="button-link" href="manohari-tf-payment.html">Go to payment</a>
       </div>
     </section>
   </main>
 
   <div class="footer">© 2026 Simple Shop • Easy browsing, friendly shopping</div>
+
+  <script>
+    // Authentication utilities
+    function getCurrentUser() {
+      try {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setCurrentUser(user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    }
+
+    function clearCurrentUser() {
+      localStorage.removeItem('currentUser');
+    }
+
+    function logout() {
+      clearCurrentUser();
+      updateAuthUI();
+      // Redirect to login page
+      window.location.href = 'manohari-tf-login.html';
+    }
+
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const userInfo = document.getElementById('userInfo');
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (user) {
+        userInfo.textContent = `Welcome, ${user.name}!`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline';
+      } else {
+        userInfo.textContent = '';
+        loginBtn.style.display = 'inline';
+        logoutBtn.style.display = 'none';
+      }
+    }
+
+    // Initialize page
+    window.addEventListener('DOMContentLoaded', () => {
+      const user = getCurrentUser();
+      if (!user) {
+        // Redirect to login if not authenticated
+        window.location.href = 'manohari-tf-login.html';
+      } else {
+        updateAuthUI();
+      }
+    });
+  </script>
 </body>
 </html>

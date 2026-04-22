@@ -1,6 +1,6 @@
 # Ecommerce System
 
-A serverless e-commerce application built with AWS Lambda, API Gateway, and DynamoDB.
+A serverless e-commerce application built with AWS Lambda, API Gateway, and DynamoDB, featuring user authentication.
 
 ## Architecture
 
@@ -8,18 +8,30 @@ A serverless e-commerce application built with AWS Lambda, API Gateway, and Dyna
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
 │   Browser   │───▶│ API Gateway │───▶│   Lambda    │───▶│  DynamoDB   │
 │             │    │             │    │ Functions   │    │             │
-│ • HTML/JS   │    │ • REST API  │    │ • Products  │    │ • Products  │
-│ • Cart UI   │    │ • CORS      │    │ • Cart      │    │ • Cart      │
-│ • Payments  │    │ • Headers   │    │ • Payments  │    │ • Payments  │
+│ • HTML/JS   │    │ • REST API  │    │ • Auth      │    │ • Users     │
+│ • Login/Auth│    │ • CORS      │    │ • Products  │    │ • Products  │
+│ • Cart UI   │    │ • JWT/local │    │ • Cart      │    │ • Cart      │
+│ • Payments  │    │             │    │ • Payments  │    │ • Payments  │
 └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
 ```
 
 ## Architecture Components
 
-- **Frontend**: HTML/CSS/JavaScript with API versioning via headers
-- **Backend**: AWS Lambda functions for products, cart, and payment services
-- **Database**: DynamoDB tables for products, cart, and payments
-- **API**: API Gateway with REST endpoints using header-based versioning
+- **Frontend**: HTML/CSS/JavaScript with localStorage-based authentication
+- **Backend**: AWS Lambda functions for authentication, products, cart, and payment services
+- **Database**: DynamoDB tables for users, products, cart, and payments
+- **API**: API Gateway with REST endpoints and user authentication
+
+
+                ┌──────────────────────────────────────┐
+                │        TERRAFORM (IaC Layer)         │
+                │--------------------------------------│
+                │ - API Gateway                        │
+                │ - Lambda Functions                   │
+                │ - DynamoDB Tables                    │
+                │ - IAM Roles & Permissions            │
+                │ - Deployment Automation              │
+                └──────────────────────────────────────┘
 
 
                 ┌──────────────────────────────────────┐
@@ -33,21 +45,30 @@ A serverless e-commerce application built with AWS Lambda, API Gateway, and Dyna
                 └──────────────────────────────────────┘
 ## API Endpoints
 
+### Authentication
+- `POST /auth/register` - Register new user (name, email, password)
+- `POST /auth/login` - Login user (email, password)
+- Returns user data and stores session in localStorage
+
 ### Products
-- `GET /products` - List all products (use `Api-Version: v1` or `v2` header)
+- `GET /products` - List all products
 
 ### Cart
-- `POST /cart` - Add item to cart
-- `GET /cart?userId={id}` - Get cart items
-- `DELETE /cart?userId={id}&itemId={id}` - Remove item from cart
-- All cart endpoints accept `Api-Version` header
+- `POST /cart` - Add item to cart (requires authentication)
+- `GET /cart?userId={id}` - Get cart items (requires authentication)
+- `DELETE /cart?userId={id}&itemId={id}` - Remove item from cart (requires authentication)
 
 ### Payment
-- `POST /pay` - Process payment
-- `GET /pay` - Get payment history
-- Accepts `Api-Version` header
+- `POST /pay` - Process payment (requires authentication)
+- `GET /pay` - Get payment history (requires authentication)
 
-## API Versioning
+## Authentication
+
+The application uses localStorage for client-side session management:
+- User data is stored in `localStorage.getItem('currentUser')`
+- All protected pages check for authentication on load
+- Unauthenticated users are redirected to login page
+- Logout clears localStorage and redirects to login
 
 This application demonstrates **header-based API versioning**. Instead of using URL paths like `/v1/products`, versioning is handled through the `Api-Version` header:
 

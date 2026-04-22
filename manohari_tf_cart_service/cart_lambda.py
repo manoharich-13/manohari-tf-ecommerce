@@ -21,7 +21,7 @@ def response(status, body):
         "statusCode": status,
         "headers": {
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Content-Type,Api-Version",
+            "Access-Control-Allow-Headers": "Content-Type",
             "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS"
         },
         "body": json.dumps(body, cls=DecimalEncoder)

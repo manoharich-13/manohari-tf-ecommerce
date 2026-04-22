@@ -25,13 +25,6 @@
     <section class="hero">
       <h1>Your cart</h1>
       <p>Review selected items, remove anything you don't want, and continue to checkout when ready.</p>
-      <div style="margin-top: 16px;">
-        <label for="apiVersion">API Version: </label>
-        <select id="apiVersion" onchange="changeVersion()">
-          <option value="v1">v1</option>
-          <option value="v2">v2</option>
-        </select>
-      </div>
     </section>
 
     <section class="card">
@@ -49,23 +42,38 @@
   <div class="footer">© 2026 Simple Shop</div>
 
   <script>
-    const USER_ID = 'user1'; // Hardcoded user ID for demo
-    const urls = {
-      cart: "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/cart"
-    };
-    let currentVersion = 'v1';
-
-    function changeVersion() {
-      currentVersion = document.getElementById('apiVersion').value;
-      getCart(); // Reload cart with new version
+    // Authentication utilities
+    function getCurrentUser() {
+      try {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      } catch (e) {
+        return null;
+      }
     }
 
+    function checkAuth() {
+      const user = getCurrentUser();
+      if (!user) {
+        // Not authenticated, redirect to login
+        window.location.href = 'manohari-tf-login.html';
+        return null;
+      }
+      return user;
+    }
+
+    const api_base_url = "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev"
+    const cart_url = "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev/cart"
+    const urls = {
+      cart: cart_url
+    };
+
+    let currentUser = null;
+
     function getCart() {
-      fetch(`${urls.cart}?userId=${USER_ID}`, {
-        headers: {
-          'Api-Version': currentVersion
-        }
-      })
+      if (!currentUser) return;
+
+      fetch(`${urls.cart}?userId=${currentUser.user_id}`)
         .then(res => res.json())
         .then(data => {
           const cart = data.body ? JSON.parse(data.body) : data;
@@ -93,19 +101,20 @@
     }
 
     function removeItem(itemId) {
-      fetch(`${urls.cart}?userId=${USER_ID}&itemId=${itemId}`, { 
-        method: 'DELETE',
-        headers: {
-          'Api-Version': currentVersion
-        }
+      if (!currentUser) return;
+
+      fetch(`${urls.cart}?userId=${currentUser.user_id}&itemId=${itemId}`, { 
+        method: 'DELETE'
       })
         .then(() => getCart())
         .catch(() => alert('Could not remove item.'));
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('apiVersion').value = currentVersion;
-      getCart();
+      currentUser = checkAuth();
+      if (currentUser) {
+        getCart();
+      }
     });
   </script>
 </body>
