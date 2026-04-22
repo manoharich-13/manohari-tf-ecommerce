@@ -24,6 +24,9 @@
     <section class="hero">
       <h1>Login to your account</h1>
       <p>Access your cart and continue shopping securely.</p>
+      <div class="message info" style="margin-top: 1rem; text-align: center;">
+        <strong>💡 New here?</strong> Create an account first, then login with your credentials.
+      </div>
     </section>
 
     <!-- Login Form -->
@@ -169,11 +172,11 @@
         } else {
           // Login failed
           document.getElementById('loginMessage').innerHTML =
-            `<div style="color: red;">${data.message || 'Login failed'}</div>`;
+            `<div class="message error">${data.message || 'Login failed. Please check your credentials or register if you don\'t have an account.'}</div>`;
         }
       } catch (error) {
         document.getElementById('loginMessage').innerHTML =
-          '<div style="color: red;">Network error. Please try again.</div>';
+          '<div class="message error">Network error. Please try again.</div>';
       }
     });
 
@@ -200,7 +203,7 @@
           // Registration successful
           setCurrentUser(data);
           document.getElementById('registerMessage').innerHTML =
-            '<div style="color: green;">Account created successfully! Redirecting...</div>';
+            '<div class="message success">Account created successfully! Redirecting...</div>';
 
           // Redirect to products page after a short delay
           setTimeout(() => {
@@ -209,11 +212,11 @@
         } else {
           // Registration failed
           document.getElementById('registerMessage').innerHTML =
-            `<div style="color: red;">${data.message || 'Registration failed'}</div>`;
+            `<div class="message error">${data.message || 'Registration failed'}</div>`;
         }
       } catch (error) {
         document.getElementById('registerMessage').innerHTML =
-          '<div style="color: red;">Network error. Please try again.</div>';
+          '<div class="message error">Network error. Please try again.</div>';
       }
     });
 
