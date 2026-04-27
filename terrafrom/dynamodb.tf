@@ -95,7 +95,7 @@ resource "aws_dynamodb_table_item" "cart_sample1" {
   })
 }
 
-# Sample Payments
+# Sample Payment Item
 resource "aws_dynamodb_table_item" "payment_sample1" {
   table_name = aws_dynamodb_table.payments.name
   hash_key   = aws_dynamodb_table.payments.hash_key

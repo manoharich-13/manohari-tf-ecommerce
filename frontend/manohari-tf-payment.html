@@ -119,6 +119,10 @@
               <h4>Payment successful</h4>
               <p>Your payment has been processed.</p>
               <p><strong>Payment ID:</strong> ${data.payment_id || data.body?.payment_id || 'N/A'}</p>
+              <p><strong>Amount paid:</strong> ₹${currentTotal}</p>
+              <p><strong>Time:</strong> ${data.time || data.body?.time || new Date().toLocaleString()}</p>
+              <p><strong>User:</strong> ${currentUser.user_id}</p>
+              <p>Thank you for shopping with us!</p>
             </div>`;
           loadCartTotal();
         })

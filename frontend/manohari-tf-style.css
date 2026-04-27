@@ -225,3 +225,12 @@ main {
     grid-template-columns: 1fr;
   }
 }
+.login-form {
+  max-width: 400px;
+  margin: 0 auto;
+  background: var(--surface);
+  padding: 28px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
