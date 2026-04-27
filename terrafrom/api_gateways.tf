@@ -330,6 +330,28 @@ resource "aws_api_gateway_integration" "auth_login_options" {
   }
 }
 
+resource "aws_api_gateway_method_response" "auth_login_post_200" {
+  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id = aws_api_gateway_resource.auth_login.id
+  http_method = "POST"
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "auth_login_post_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id = aws_api_gateway_resource.auth_login.id
+  http_method = "POST"
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+}
+
 # CORS for Auth
 resource "aws_api_gateway_method_response" "auth_register_options_200" {
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
