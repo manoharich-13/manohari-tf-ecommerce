@@ -2,6 +2,7 @@ import json
 import boto3
 import uuid
 import decimal
+import datetime
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -59,7 +60,8 @@ def lambda_handler(event, context):
             Item={
                 "payment_id": payment_id,
                 "user": user,
-                "amount": amount
+                "amount": amount,
+                "time": datetime.datetime.now().isoformat()
             }
         )
 
@@ -75,7 +77,8 @@ def lambda_handler(event, context):
                 "message": "Payment successful",
                 "payment_id": payment_id,
                 "user": user,
-                "amount": amount
+                "amount": amount,
+                "time": datetime.datetime.now().isoformat()
             })
         }
         

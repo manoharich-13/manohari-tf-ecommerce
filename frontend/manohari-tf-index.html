@@ -17,7 +17,7 @@
     </div>
     <div class="nav-actions">
       <span id="userInfo" style="margin-right: 16px;"></span>
-      <a class="button-link" id="loginBtn" href="manohari-tf-login.html" style="display: none;">Login</a>
+      <a class="button-link" id="loginBtn" href="manohari-tf-login.html">Login</a>
       <button id="logoutBtn" onclick="logout()" class="logout-btn" style="display: none;">Logout</button>
       <a class="button-link" href="manohari-tf-products.html">Products</a>
       <a class="button-link" href="manohari-tf-cart.html">Cart</a>
@@ -99,13 +99,7 @@
 
     // Initialize page
     window.addEventListener('DOMContentLoaded', () => {
-      const user = getCurrentUser();
-      if (!user) {
-        // Redirect to login if not authenticated
-        window.location.href = 'manohari-tf-login.html';
-      } else {
-        updateAuthUI();
-      }
+      updateAuthUI();
     });
   </script>
 </body>
