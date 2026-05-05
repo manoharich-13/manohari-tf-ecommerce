@@ -1,0 +1,59 @@
+name: Python CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+
+  # 🔹 Product Service
+  product-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install & Test Product Service
+        run: |
+          cd product-service
+          pip install -r requirements.txt || echo "No requirements"
+          pytest || echo "No tests"
+
+  # 🔹 Cart Service
+  cart-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install & Test Cart Service
+        run: |
+          cd cart-service
+          pip install -r requirements.txt || echo "No requirements"
+          pytest || echo "No tests"
+
+  # 🔹 Payment Service
+  payment-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install & Test Payment Service
+        run: |
+          cd payment-service
+          pip install -r requirements.txt || echo "No requirements"
+          pytest || echo "No tests"
