@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cart - Simple Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="manohari-tf-style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <p class="brand-title">Simple Shop</p>
+        <p class="brand-subtitle">Your shopping cart</p>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <span id="userInfo" style="margin-right: 16px;"></span>
+      <a class="button-link" id="loginBtn" href="manohari-tf-login.html">Login</a>
+      <button id="logoutBtn" onclick="logout()" class="logout-btn" style="display: none;">Logout</button>
+      <a class="button-link" href="manohari-tf-index.html">Home</a>
+      <a class="button-link" href="manohari-tf-products.html">Products</a>
+      <a class="button-link" href="manohari-tf-payment.html">Payment</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Review your cart</h1>
+      <p>Manage items, update quantities, and proceed to checkout when ready.</p>
+    </section>
+
+    <section class="card">
+      <h2>Your cart items</h2>
+      <p>Click refresh to see latest cart contents. Remove items you no longer need.</p>
+      <button class="checkout-btn" onclick="getCart()">Refresh cart</button>
+      <div id="cartList" style="margin-top: 24px;"></div>
+      
+      <div id="cartSummary" class="summary-row" style="display: none;">
+        <span>Grand Total</span>
+        <strong id="grandTotal">₹0</strong>
+      </div>
+      
+      <div style="margin-top: 24px;">
+        <button id="checkoutBtn" class="checkout-btn" onclick="goToCheckout()" disabled>Proceed to checkout</button>
+        <div id="message" class="message" style="display: none;"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">© 2026 Simple Shop</div>
+
+  <script>
+    // Shared auth utils (matching index/products)
+    function getCurrentUser() {
+      try {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function checkAuth() {
+      const user = getCurrentUser();
+      if (!user) {
+        window.location.href = 'manohari-tf-login.html';
+        return null;
+      }
+      return user;
+    }
+
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const userInfo = document.getElementById('userInfo');
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (user) {
+        userInfo.textContent = `Hi, ${user.name}!`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline';
+      } else {
+        userInfo.textContent = '';
+        loginBtn.style.display = 'inline';
+        logoutBtn.style.display = 'none';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      updateAuthUI();
+      window.location.href = 'manohari-tf-login.html';
+    }
+
+    function showMessage(text, type = 'info') {
+      const msgEl = document.getElementById('message');
+      msgEl.textContent = text;
+      msgEl.className = `message ${type}`;
+      msgEl.style.display = 'block';
+      setTimeout(() => msgEl.style.display = 'none', 4000);
+    }
+
+    const api_base_url = "https://kqprjormee.execute-api.ap-southeast-1.amazonaws.com/dev";
+    const cart_url = `${api_base_url}/cart`;
+
+    let currentUser = null;
+
+    function getCart() {
+      if (!currentUser) return;
+
+      fetch(`${cart_url}?userId=${currentUser.user_id}`)
+        .then(res => res.json())
+        .then(data => {
+          const items = data.body ? JSON.parse(data.body) : data;
+          renderCart(items);
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('cartList').innerHTML = '<p class="message error">Unable to load cart.</p>';
+        });
+    }
+
+    function renderCart(items) {
+      const container = document.getElementById('cartList');
+      if (items.length === 0) {
+        container.innerHTML = '<p>No items in cart. <a href="manohari-tf-products.html">Continue shopping</a></p>';
+        document.getElementById('cartSummary').style.display = 'none';
+        document.getElementById('checkoutBtn').disabled = true;
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <div class="cart-item">
+          <div>
+            <h4>${item.product_name}</h4>
+            <div class="cart-meta">
+              <span>₹${item.price} x ${item.quantity}</span>
+              <strong>₹${item.total_price}</strong>
+            </div>
+          </div>
+          <button onclick="deleteItem('${item.itemId}')" title="Remove">✕</button>
+        </div>
+      `).join('');
+
+      computeTotal();
+    }
+
+    function deleteItem(itemId) {
+      if (!currentUser || !confirm('Remove this item?')) return;
+
+      fetch(`${cart_url}?userId=${currentUser.user_id}&itemId=${itemId}`, { method: 'DELETE' })
+        .then(() => {
+          showMessage('Item removed', 'success');
+          getCart(); // Refresh
+        })
+        .catch(() => showMessage('Could not remove item', 'error'));
+    }
+
+    function computeTotal() {
+      // Sum total_price from rendered items (could refetch, but use DOM for speed)
+      const totals = Array.from(document.querySelectorAll('.cart-item .cart-meta strong'))
+        .map(el => parseFloat(el.textContent.replace(/[₹,]/g, '')) || 0);
+      const grandTotal = totals.reduce((sum, t) => sum + t, 0);
+      
+      document.getElementById('grandTotal').textContent = `₹${grandTotal.toLocaleString()}`;
+      document.getElementById('cartSummary').style.display = 'flex';
+      document.getElementById('checkoutBtn').disabled = grandTotal === 0;
+    }
+
+    function goToCheckout() {
+      window.location.href = 'manohari-tf-payment.html';
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      currentUser = checkAuth();
+      if (currentUser) {
+        updateAuthUI();
+        getCart();
+      }
+    });
+  </script>
+</body>
+</html>
+

@@ -28,7 +28,7 @@ resource "aws_iam_role_policy_attachment" "dynamo_full" {
 data "archive_file" "product_zip" {
   type        = "zip"
   source_file = "../backend/manohari_tf_product_service/product_service.py"
-  output_path = "product_service/product_service.zip"
+  output_path = "product_service.zip"
 }
 
 resource "aws_lambda_function" "product_lambda" {
