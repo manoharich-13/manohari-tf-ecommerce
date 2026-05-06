@@ -40,7 +40,7 @@ def response(status, body):
 def parse_body(event):
     body = event.get("body")
 
-    if body is None or body == "":
+    if body is None:
         return {}
 
     if isinstance(body, dict):
@@ -49,7 +49,7 @@ def parse_body(event):
     try:
         return json.loads(body)
     except Exception:
-        return None   # IMPORTANT FIX
+        raise Exception("Invalid JSON")   # 🔥 IMPORTANT CHANGE
 
 # ---------------------------
 # MAIN HANDLER (FIXED)
@@ -63,13 +63,13 @@ def lambda_handler(event, context):
     try:
         # ✅ OPTIONS FIX
         if method == "OPTIONS":
-            return response(200, {"message": "OK"})
+            return response(200, {"message": "CORS OK"})
 
         # ✅ FIXED ROUTES
-        elif method == "POST" and "/api/login" in path:
+        elif method == "POST" and ("login" in path):
             return login_user(event)
 
-        elif method == "POST" and "/api/register" in path:
+        elif method == "POST" and ("register" in path):
             return register_user(event)
 
         else:
