@@ -89,7 +89,7 @@ def registered_user(dynamodb_table, sample_user_data):
 # TEST: CORS OPTIONS
 # ===========================
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_options_request(mock_get_table):
     """Test CORS preflight OPTIONS request"""
     event = {
@@ -110,7 +110,7 @@ def test_options_request(mock_get_table):
 # TEST: REGISTER USER
 # ===========================
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_register_user_success(mock_get_table, dynamodb_table):
     """Test successful user registration"""
     mock_get_table.return_value = dynamodb_table
@@ -142,7 +142,7 @@ def test_register_user_success(mock_get_table, dynamodb_table):
     assert "password" in db_user["Item"]
 
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_register_user_missing_fields(mock_get_table, dynamodb_table):
     """Test registration with missing required fields"""
     mock_get_table.return_value = dynamodb_table
@@ -169,7 +169,7 @@ def test_register_user_missing_fields(mock_get_table, dynamodb_table):
         assert body["message"] == "All fields required"
 
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_register_user_already_exists(mock_get_table, dynamodb_table, registered_user):
     """Test registration with an email that already exists"""
     mock_get_table.return_value = dynamodb_table
@@ -193,7 +193,7 @@ def test_register_user_already_exists(mock_get_table, dynamodb_table, registered
     assert body["message"] == "User already exists"
 
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_register_user_invalid_json(mock_get_table, dynamodb_table):
     """Test registration with invalid JSON body"""
     mock_get_table.return_value = dynamodb_table
@@ -217,7 +217,7 @@ def test_register_user_invalid_json(mock_get_table, dynamodb_table):
 # TEST: LOGIN USER
 # ===========================
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_login_user_success(mock_get_table, dynamodb_table, registered_user):
     """Test successful user login"""
     mock_get_table.return_value = dynamodb_table
@@ -245,7 +245,7 @@ def test_login_user_success(mock_get_table, dynamodb_table, registered_user):
     assert "password" not in body["user"]  # Password should not be returned
 
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_login_user_missing_fields(mock_get_table, dynamodb_table):
     """Test login with missing required fields"""
     mock_get_table.return_value = dynamodb_table
@@ -271,7 +271,7 @@ def test_login_user_missing_fields(mock_get_table, dynamodb_table):
         assert body["message"] == "Email and password required"
 
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_login_user_not_found(mock_get_table, dynamodb_table):
     """Test login with non-existent user"""
     mock_get_table.return_value = dynamodb_table
@@ -294,7 +294,7 @@ def test_login_user_not_found(mock_get_table, dynamodb_table):
     assert body["message"] == "Invalid credentials"
 
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_login_user_wrong_password(mock_get_table, dynamodb_table, registered_user):
     """Test login with incorrect password"""
     mock_get_table.return_value = dynamodb_table
@@ -317,7 +317,7 @@ def test_login_user_wrong_password(mock_get_table, dynamodb_table, registered_us
     assert body["message"] == "Invalid credentials"
 
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_login_user_invalid_json(mock_get_table, dynamodb_table):
     """Test login with invalid JSON body"""
     mock_get_table.return_value = dynamodb_table
@@ -341,7 +341,7 @@ def test_login_user_invalid_json(mock_get_table, dynamodb_table):
 # TEST: UNSUPPORTED ROUTES
 # ===========================
 
-@patch('manohari_tf_auth_service.auth_service.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_unsupported_route(mock_get_table):
     """Test unsupported route returns 400"""
     from backend.manohari_tf_auth_service.auth_service import lambda_handler
@@ -358,7 +358,7 @@ def test_unsupported_route(mock_get_table):
     assert body["message"] == "Unsupported route"
 
 
-@patch('lambda_function.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_unsupported_method(mock_get_table):
     """Test unsupported HTTP method"""
     from backend.manohari_tf_auth_service.auth_service import lambda_handler
@@ -417,7 +417,7 @@ def test_response_structure():
 # TEST: DATABASE EXCEPTIONS
 # ===========================
 
-@patch('lambda_function.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_register_database_error(mock_get_table):
     """Test registration handles database errors gracefully"""
     mock_table = MagicMock()
