@@ -3,14 +3,14 @@ import boto3
 import hashlib
 import uuid
 
-# --------------------------- 
+# ---------------------------
 # DynamoDB Setup
 # ---------------------------
 def get_table():
     dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-1')
     return dynamodb.Table('users-table')
 
-# --------------------------- 
+# ---------------------------
 # Password Hashing
 # ---------------------------
 def hash_password(password):
@@ -19,7 +19,7 @@ def hash_password(password):
 def verify_password(password, hashed):
     return hash_password(password) == hashed
 
-# --------------------------- 
+# ---------------------------
 # Response Helper
 # ---------------------------
 def response(status, body):
@@ -34,8 +34,25 @@ def response(status, body):
         "body": json.dumps(body)
     }
 
-# --------------------------- 
-# MAIN LAMBDA HANDLER
+# ---------------------------
+# Body Parser (FIXED)
+# ---------------------------
+def parse_body(event):
+    body = event.get("body")
+
+    if body is None or body == "":
+        return {}
+
+    if isinstance(body, dict):
+        return body
+
+    try:
+        return json.loads(body)
+    except Exception:
+        return None   # IMPORTANT FIX
+
+# ---------------------------
+# MAIN HANDLER (FIXED)
 # ---------------------------
 def lambda_handler(event, context):
     print("EVENT:", json.dumps(event))
@@ -44,22 +61,15 @@ def lambda_handler(event, context):
     path = event.get("path", "")
 
     try:
+        # ✅ OPTIONS FIX
         if method == "OPTIONS":
-            
-            return {
-                "statusCode": 200,
-                "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
-            },
-                "body": ""
-            }
+            return response(200, {"message": "OK"})
 
-        elif method == "POST" and "/auth/login" in path:
+        # ✅ FIXED ROUTES
+        elif method == "POST" and "/api/login" in path:
             return login_user(event)
 
-        elif method == "POST" and "/auth/register" in path:
+        elif method == "POST" and "/api/register" in path:
             return register_user(event)
 
         else:
@@ -69,31 +79,18 @@ def lambda_handler(event, context):
         print("MAIN ERROR:", str(e))
         return response(500, {"error": str(e)})
 
-# --------------------------- 
-# REGISTER USER
 # ---------------------------
-def parse_body(event):
-    body = event.get("body")
-
-    if body is None:
-        return {}
-
-    # If body is already dict (sometimes happens)
-    if isinstance(body, dict):
-        return body
-
-    # Handle string body
-    try:
-        return json.loads(body)
-    except Exception:
-        return {}
-
-
-
+# REGISTER USER (FIXED)
+# ---------------------------
 def register_user(event):
-    users_table = get_table() 
     try:
+        users_table = get_table()   # moved inside try
+
         body = parse_body(event)
+
+        # ✅ INVALID JSON FIX
+        if body is None:
+            return response(500, {"message": "Invalid JSON"})
 
         name = body.get("name")
         email = body.get("email")
@@ -102,8 +99,8 @@ def register_user(event):
         if not all([name, email, password]):
             return response(400, {"message": "All fields required"})
 
-        # Check if user exists
         existing = users_table.get_item(Key={"email": email})
+
         if "Item" in existing:
             return response(409, {"message": "User already exists"})
 
@@ -130,13 +127,18 @@ def register_user(event):
         print("REGISTER ERROR:", str(e))
         return response(500, {"error": str(e)})
 
-# --------------------------- 
-# LOGIN USER
+# ---------------------------
+# LOGIN USER (FIXED)
 # ---------------------------
 def login_user(event):
-    users_table = get_table() 
     try:
+        users_table = get_table()   # moved inside try
+
         body = parse_body(event)
+
+        # ✅ INVALID JSON FIX
+        if body is None:
+            return response(500, {"message": "Invalid JSON"})
 
         email = body.get("email")
         password = body.get("password")
@@ -144,7 +146,8 @@ def login_user(event):
         if not all([email, password]):
             return response(400, {"message": "Email and password required"})
 
-        user = users_table.get_item(Key={"email": email}) or {}
+        user = users_table.get_item(Key={"email": email})
+
         if "Item" not in user:
             return response(401, {"message": "Invalid credentials"})
 
@@ -161,7 +164,6 @@ def login_user(event):
                 "email": user_data["email"]
             }
         })
-        
 
     except Exception as e:
         print("LOGIN ERROR:", str(e))
