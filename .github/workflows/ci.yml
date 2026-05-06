@@ -95,15 +95,12 @@ jobs:
 
       - name: Build Package
         run: |
-          mkdir build/${{ matrix.service }}
+         mkdir -p build/${{ matrix.service }}
           cd build/${{ matrix.service }}
-
-          pip install boto3 -t .
-
-          cp -r ../../backend/manohari_tf_${{ matrix.service }}/* .
-
+          pip install -r ../../../requirements.txt -t .
+          cp -r ../../../backend/manohari_tf_${{ matrix.service }}/* .
           zip -r ../../../${{ matrix.service }}.zip .
-
+ 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.service }}
