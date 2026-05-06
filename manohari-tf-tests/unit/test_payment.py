@@ -3,7 +3,7 @@ import json
 import boto3
 import pytest
 from moto import mock_aws
-from manohari_tf_payment_service.payment import lambda_handler
+from backend.manohari_tf_payment_service.payment import lambda_handler
 
 import sys
 import os

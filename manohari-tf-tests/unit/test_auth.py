@@ -97,7 +97,7 @@ def test_options_request(mock_get_table):
         "path": "/auth/register"
     }
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     result = lambda_handler(event, None)
     
     assert result["statusCode"] == 200
@@ -115,7 +115,7 @@ def test_register_user_success(mock_get_table, dynamodb_table):
     """Test successful user registration"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -147,7 +147,7 @@ def test_register_user_missing_fields(mock_get_table, dynamodb_table):
     """Test registration with missing required fields"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     test_cases = [
         {"email": "test@example.com", "password": "pass"},  # Missing name
@@ -174,7 +174,7 @@ def test_register_user_already_exists(mock_get_table, dynamodb_table, registered
     """Test registration with an email that already exists"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -198,7 +198,7 @@ def test_register_user_invalid_json(mock_get_table, dynamodb_table):
     """Test registration with invalid JSON body"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -222,7 +222,7 @@ def test_login_user_success(mock_get_table, dynamodb_table, registered_user):
     """Test successful user login"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -250,7 +250,7 @@ def test_login_user_missing_fields(mock_get_table, dynamodb_table):
     """Test login with missing required fields"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     test_cases = [
         {"email": "test@example.com"},  # Missing password
@@ -276,7 +276,7 @@ def test_login_user_not_found(mock_get_table, dynamodb_table):
     """Test login with non-existent user"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -299,7 +299,7 @@ def test_login_user_wrong_password(mock_get_table, dynamodb_table, registered_us
     """Test login with incorrect password"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -322,7 +322,7 @@ def test_login_user_invalid_json(mock_get_table, dynamodb_table):
     """Test login with invalid JSON body"""
     mock_get_table.return_value = dynamodb_table
     
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -344,7 +344,7 @@ def test_login_user_invalid_json(mock_get_table, dynamodb_table):
 @patch('manohari_tf_auth_service.auth_service.get_table')
 def test_unsupported_route(mock_get_table):
     """Test unsupported route returns 400"""
-    from manohari_tf_auth_service.auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "GET",
@@ -361,7 +361,7 @@ def test_unsupported_route(mock_get_table):
 @patch('lambda_function.get_table')
 def test_unsupported_method(mock_get_table):
     """Test unsupported HTTP method"""
-    from auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "DELETE",
@@ -424,7 +424,7 @@ def test_register_database_error(mock_get_table):
     mock_table.get_item.side_effect = Exception("Database connection error")
     mock_get_table.return_value = mock_table
     
-    from auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -443,14 +443,14 @@ def test_register_database_error(mock_get_table):
     assert "error" in body
 
 
-@patch('lambda_function.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_login_database_error(mock_get_table):
     """Test login handles database errors gracefully"""
     mock_table = MagicMock()
     mock_table.get_item.side_effect = Exception("Database connection error")
     mock_get_table.return_value = mock_table
     
-    from auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -472,12 +472,12 @@ def test_login_database_error(mock_get_table):
 # TEST: EDGE CASES
 # ===========================
 
-@patch('lambda_function.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_empty_body(mock_get_table, dynamodb_table):
     """Test handling of empty request body"""
     mock_get_table.return_value = dynamodb_table
     
-    from auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -491,12 +491,12 @@ def test_empty_body(mock_get_table, dynamodb_table):
     assert result["statusCode"] in [400, 500]
 
 
-@patch('lambda_function.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_missing_body(mock_get_table, dynamodb_table):
     """Test handling of missing body field"""
     mock_get_table.return_value = dynamodb_table
     
-    from auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
@@ -508,12 +508,12 @@ def test_missing_body(mock_get_table, dynamodb_table):
     assert result["statusCode"] in [400, 500]
 
 
-@patch('lambda_function.get_table')
+@patch('backend.manohari_tf_auth_service.auth_service.get_table')
 def test_special_characters_in_data(mock_get_table, dynamodb_table):
     """Test handling of special characters in user data"""
     mock_get_table.return_value = dynamodb_table
     
-    from auth_service import lambda_handler
+    from backend.manohari_tf_auth_service.auth_service import lambda_handler
     
     event = {
         "httpMethod": "POST",
