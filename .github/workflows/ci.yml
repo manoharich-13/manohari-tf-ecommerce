@@ -79,9 +79,13 @@ jobs:
   # =========================
   # Build Lambda Packages
   # =========================
-  build:
+  # =========================
+# Build Lambda Packages
+# =========================
+build:
   runs-on: ubuntu-latest
   needs: backend-tests
+
   strategy:
     matrix:
       service:
