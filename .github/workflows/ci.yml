@@ -62,15 +62,23 @@ jobs:
           - product
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.11
 
-      - run: |
+    - name: Install dependencies
+      run: |
+        pip install pytest pytest-cov moto boto3
+
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PWD/backend" >> $GITHUB_ENV
+
+    - name: Run tests
+      run: |
           pip install pytest pytest-cov moto boto3
-          pytest tests/test_${{ matrix.service }}.py -v
+          pytest manohari-tf-tests/unit/test_${{ matrix.service }}.py -v
 
   # =========================
   # Frontend Validation
