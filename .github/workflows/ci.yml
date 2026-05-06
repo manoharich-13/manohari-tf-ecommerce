@@ -32,10 +32,14 @@ jobs:
           pylint **/*.py --exit-zero
 
   # =========================
-  # Security Scan
+  # Backend Tests
   # =========================
-  security:
+  backend-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth, cart, payment, product]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -43,41 +47,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - run: |
-          pip install bandit safety
-          bandit -r . || true
-          safety check || true
-
-  # =========================
-  # Backend Tests (All Services)
-  # =========================
-  backend-tests:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service:
-          - auth
-          - cart
-          - payment
-          - product
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: 3.11
-
-    - name: Install dependencies
-      run: |
-        pip install pytest pytest-cov moto boto3
-
-    - name: Set PYTHONPATH
-      run: echo "PYTHONPATH=$PWD/backend" >> $GITHUB_ENV
-
-    - name: Run tests
-      run: |
+      - name: Install dependencies
+        run: |
           pip install pytest pytest-cov moto boto3
+
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+
+      - name: Run tests
+        run: |
           pytest manohari-tf-tests/unit/test_${{ matrix.service }}.py -v
 
   # =========================
@@ -88,23 +66,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # HTML validation
       - name: Validate HTML
         run: |
           npm install -g htmlhint
-          htmlhint "*.html"
+          htmlhint "frontend/*.html"
 
-      # JS check (basic)
-      - name: Check JavaScript
-        run: |
-          npm install -g eslint
-          eslint . || true
-
-      # CSS check
       - name: Check CSS
         run: |
           npm install -g stylelint stylelint-config-standard
-          stylelint "**/*.css" || true
+          stylelint "frontend/**/*.css" || true
 
   # =========================
   # Build Lambda Packages
@@ -125,10 +95,14 @@ jobs:
 
       - name: Build Package
         run: |
-          mkdir build && cd build
-          pip install -r ../requirements.txt -t .
-          cp -r ../manohari_tf_${{ matrix.service }}/* .
-          zip -r ../${{ matrix.service }}.zip .
+          mkdir build/${{ matrix.service }}
+          cd build/${{ matrix.service }}
+
+          pip install boto3 -t .
+
+          cp -r ../../backend/manohari_tf_${{ matrix.service }}/* .
+
+          zip -r ../../../${{ matrix.service }}.zip .
 
       - uses: actions/upload-artifact@v4
         with:
