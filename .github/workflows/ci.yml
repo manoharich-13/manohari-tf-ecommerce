@@ -80,28 +80,27 @@ jobs:
   # Build Lambda Packages
   # =========================
   build:
-    runs-on: ubuntu-latest
-    needs: backend-tests
-    strategy:
-      matrix:
-        service:
-          - auth_service
-          - cart_service
-          - payment_service
-          - product_service
+  runs-on: ubuntu-latest
+  needs: backend-tests
+  strategy:
+    matrix:
+      service:
+        - auth_service
+        - cart_service
+        - payment_service
+        - product_service
 
-    steps:
-      - uses: actions/checkout@v4
+  steps:
+    - uses: actions/checkout@v4
 
-      - name: Build Package
-        run: |
-         mkdir -p build/${{ matrix.service }}
-          cd build/${{ matrix.service }}
-          pip install -r ../../../requirements.txt -t .
-          cp -r ../../../backend/manohari_tf_${{ matrix.service }}/* .
-          zip -r ../../../${{ matrix.service }}.zip .
- 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.service }}
-          path: ${{ matrix.service }}.zip
+    - name: Build Package
+      run: |
+        mkdir -p build/${{ matrix.service }}
+        cp -r backend/manohari_tf_${{ matrix.service }}/* build/${{ matrix.service }}/
+        cd build/${{ matrix.service }}
+        zip -r ../../${{ matrix.service }}.zip .
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.service }}
+        path: ${{ matrix.service }}.zip
