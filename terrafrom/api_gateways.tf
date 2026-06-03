@@ -25,19 +25,19 @@ resource "aws_api_gateway_method" "products_options" {
 }
 
 resource "aws_api_gateway_integration" "products_get" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.products.id
-  http_method = aws_api_gateway_method.products_get.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.products.id
+  http_method             = aws_api_gateway_method.products_get.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.product_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.product_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "products_options" {
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
   resource_id = aws_api_gateway_resource.products.id
   http_method = aws_api_gateway_method.products_options.http_method
-  type = "MOCK"
+  type        = "MOCK"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -79,37 +79,37 @@ resource "aws_api_gateway_method" "cart_options" {
 }
 
 resource "aws_api_gateway_integration" "cart_post" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.cart.id
-  http_method = aws_api_gateway_method.cart_post.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.cart.id
+  http_method             = aws_api_gateway_method.cart_post.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.cart_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.cart_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "cart_get" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.cart.id
-  http_method = aws_api_gateway_method.cart_get.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.cart.id
+  http_method             = aws_api_gateway_method.cart_get.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.cart_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.cart_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "cart_delete" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.cart.id
-  http_method = aws_api_gateway_method.cart_delete.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.cart.id
+  http_method             = aws_api_gateway_method.cart_delete.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.cart_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.cart_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "cart_options" {
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
   resource_id = aws_api_gateway_resource.cart.id
   http_method = aws_api_gateway_method.cart_options.http_method
-  type = "MOCK"
+  type        = "MOCK"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -144,28 +144,28 @@ resource "aws_api_gateway_method" "pay_options" {
 }
 
 resource "aws_api_gateway_integration" "pay_post" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.pay.id
-  http_method = aws_api_gateway_method.pay_post.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.pay.id
+  http_method             = aws_api_gateway_method.pay_post.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.payment_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.payment_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "pay_get" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.pay.id
-  http_method = aws_api_gateway_method.pay_get.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.pay.id
+  http_method             = aws_api_gateway_method.pay_get.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.payment_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.payment_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "pay_options" {
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
   resource_id = aws_api_gateway_resource.pay.id
   http_method = aws_api_gateway_method.pay_options.http_method
-  type = "MOCK"
+  type        = "MOCK"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -175,8 +175,8 @@ resource "aws_api_gateway_integration" "pay_options" {
 resource "aws_api_gateway_method_response" "options_200" {
   for_each = {
     products = aws_api_gateway_resource.products.id
-    cart = aws_api_gateway_resource.cart.id
-    pay = aws_api_gateway_resource.pay.id
+    cart     = aws_api_gateway_resource.cart.id
+    pay      = aws_api_gateway_resource.pay.id
   }
 
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
@@ -187,7 +187,7 @@ resource "aws_api_gateway_method_response" "options_200" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
   }
 
   depends_on = [
@@ -196,12 +196,11 @@ resource "aws_api_gateway_method_response" "options_200" {
     aws_api_gateway_method.pay_options
   ]
 }
-
 resource "aws_api_gateway_integration_response" "options_integration_response" {
   for_each = {
     products = aws_api_gateway_resource.products.id
-    cart = aws_api_gateway_resource.cart.id
-    pay = aws_api_gateway_resource.pay.id
+    cart     = aws_api_gateway_resource.cart.id
+    pay      = aws_api_gateway_resource.pay.id
   }
 
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
@@ -212,35 +211,40 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'*'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS,DELETE'"
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 
-  depends_on = [aws_api_gateway_method_response.options_200]
+  depends_on = [
+    aws_api_gateway_integration.products_options,
+    aws_api_gateway_integration.cart_options,
+    aws_api_gateway_integration.pay_options,
+    aws_api_gateway_method_response.options_200
+  ]
 }
 
 # Lambda Permissions
 resource "aws_lambda_permission" "api_gateway_products" {
-  statement_id = "AllowAPIGatewayInvokeProducts"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowAPIGatewayInvokeProducts"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.product_lambda.function_name
-  principal = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
 }
 
 resource "aws_lambda_permission" "api_gateway_cart" {
-  statement_id = "AllowAPIGatewayInvokeCart"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowAPIGatewayInvokeCart"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.cart_lambda.function_name
-  principal = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
 }
 
 resource "aws_lambda_permission" "api_gateway_pay" {
-  statement_id = "AllowAPIGatewayInvokePay"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowAPIGatewayInvokePay"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.payment_lambda.function_name
-  principal = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
 }
 
 # /auth
@@ -272,19 +276,19 @@ resource "aws_api_gateway_method" "auth_register_options" {
 }
 
 resource "aws_api_gateway_integration" "auth_register_post" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.auth_register.id
-  http_method = aws_api_gateway_method.auth_register_post.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.auth_register.id
+  http_method             = aws_api_gateway_method.auth_register_post.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.auth_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.auth_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "auth_register_options" {
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
   resource_id = aws_api_gateway_resource.auth_register.id
   http_method = aws_api_gateway_method.auth_register_options.http_method
-  type = "MOCK"
+  type        = "MOCK"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -312,19 +316,19 @@ resource "aws_api_gateway_method" "auth_login_options" {
 }
 
 resource "aws_api_gateway_integration" "auth_login_post" {
-  rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
-  resource_id = aws_api_gateway_resource.auth_login.id
-  http_method = aws_api_gateway_method.auth_login_post.http_method
+  rest_api_id             = aws_api_gateway_rest_api.ecommerce_api.id
+  resource_id             = aws_api_gateway_resource.auth_login.id
+  http_method             = aws_api_gateway_method.auth_login_post.http_method
   integration_http_method = "POST"
-  type = "AWS_PROXY"
-  uri = aws_lambda_function.auth_lambda.invoke_arn
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.auth_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "auth_login_options" {
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
   resource_id = aws_api_gateway_resource.auth_login.id
   http_method = aws_api_gateway_method.auth_login_options.http_method
-  type = "MOCK"
+  type        = "MOCK"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
@@ -350,7 +354,14 @@ resource "aws_api_gateway_integration_response" "auth_login_post_integration_res
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.auth_login_post,
+    aws_api_gateway_method_response.auth_login_post_200
+  ]
 }
+
+
 
 # CORS for Auth
 resource "aws_api_gateway_method_response" "auth_register_options_200" {
@@ -362,7 +373,7 @@ resource "aws_api_gateway_method_response" "auth_register_options_200" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
   }
 }
 
@@ -375,7 +386,7 @@ resource "aws_api_gateway_integration_response" "auth_register_options_integrati
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'*'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 
   depends_on = [
@@ -393,7 +404,7 @@ resource "aws_api_gateway_method_response" "auth_login_options_200" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
   }
 }
 
@@ -406,7 +417,7 @@ resource "aws_api_gateway_integration_response" "auth_login_options_integration_
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'*'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 
   depends_on = [
@@ -417,26 +428,37 @@ resource "aws_api_gateway_integration_response" "auth_login_options_integration_
 
 # Lambda Permissions for Auth
 resource "aws_lambda_permission" "api_gateway_auth" {
-  statement_id = "AllowAPIGatewayInvokeAuth"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowAPIGatewayInvokeAuth"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.auth_lambda.function_name
-  principal = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.ecommerce_api.execution_arn}/*/*/*"
 }
 
 # Deployment
 resource "aws_api_gateway_deployment" "deployment" {
   depends_on = [
     aws_api_gateway_integration.products_get,
+    aws_api_gateway_integration.products_options,
+
     aws_api_gateway_integration.cart_post,
     aws_api_gateway_integration.cart_get,
     aws_api_gateway_integration.cart_delete,
+    aws_api_gateway_integration.cart_options,
+
     aws_api_gateway_integration.pay_post,
     aws_api_gateway_integration.pay_get,
+    aws_api_gateway_integration.pay_options,
+
     aws_api_gateway_integration.auth_register_post,
     aws_api_gateway_integration.auth_register_options,
+
     aws_api_gateway_integration.auth_login_post,
-    aws_api_gateway_integration.auth_login_options
+    aws_api_gateway_integration.auth_login_options,
+
+    aws_api_gateway_integration_response.options_integration_response,
+    aws_api_gateway_integration_response.auth_register_options_integration_response,
+    aws_api_gateway_integration_response.auth_login_options_integration_response
   ]
 
   rest_api_id = aws_api_gateway_rest_api.ecommerce_api.id
@@ -448,11 +470,7 @@ resource "aws_api_gateway_deployment" "deployment" {
       aws_api_gateway_resource.pay.id,
       aws_api_gateway_resource.auth.id,
       aws_api_gateway_resource.auth_register.id,
-      aws_api_gateway_resource.auth_login.id,
-      aws_lambda_function.product_lambda.id,
-      aws_lambda_function.cart_lambda.id,
-      aws_lambda_function.payment_lambda.id,
-      aws_lambda_function.auth_lambda.id
+      aws_api_gateway_resource.auth_login.id
     ]))
   }
 
@@ -460,6 +478,8 @@ resource "aws_api_gateway_deployment" "deployment" {
     create_before_destroy = true
   }
 }
+
+
 
 # Stage
 resource "aws_api_gateway_stage" "dev" {
