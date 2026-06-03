@@ -80,6 +80,7 @@ resource "aws_s3_object" "frontend_objects" {
   key          = each.key
   source       = each.value.source_path
   content_type = each.value.content_type
+  cache_control = "max-age=0, no-cache, no-store, must-revalidate"
 
   etag = filemd5(each.value.source_path)
 
@@ -168,6 +169,17 @@ resource "aws_cloudfront_distribution" "frontend" {
   }
 
   depends_on = [aws_s3_object.frontend_objects]
+}
+
+resource "null_resource" "cloudfront_invalidation" {
+  provisioner "local-exec" {
+    command = "powershell -Command \"if (Get-Command aws -ErrorAction SilentlyContinue) { try { aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.frontend.id} --paths '/*' } catch { Write-Output 'AWS invalidation skipped: credentials not configured'; exit 0 } } else { Write-Output 'AWS CLI not found, skipping invalidation'; exit 0 }\""
+  }
+
+  triggers = {
+    distribution_id = aws_cloudfront_distribution.frontend.id
+    object_etags     = join(",", [for obj in aws_s3_object.frontend_objects : obj.etag])
+  }
 }
 
 output "cloudfront_frontend_url" {
